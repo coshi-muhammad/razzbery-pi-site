@@ -1,3 +1,4 @@
 node_modules/
 storage_area/
 database/
+.env

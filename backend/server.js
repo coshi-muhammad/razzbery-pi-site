@@ -1,7 +1,8 @@
-import express, { json } from "express";
+import express, { json, response } from "express";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-
+import dotenv from "dotenv";
+dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -18,8 +19,15 @@ app.get('/guest', (req, res) => {
 app.get('/password', (req, res) => {
   res.sendFile(join(__dirname, "../frontend", "password.html"))
 })
-app.post('/api/post', (req, res) => {
-  console.log(req.body)
+app.use('/protected', (req, res, next) => {
+  if (req.headers.password === process.env.PASSWORD) {
+    next()
+  } else {
+    res.status(401).send("something went wrong")
+  }
+})
+app.get('/protected/notes', (req, res) => {
+  res.status(200).sendFile(join(__dirname, "../frontend", "notes.html"))
 })
 
 
