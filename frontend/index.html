@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+  }
+
+  img {
+    width: 30%;
+    height: 30%;
+  }
+
+  h1 {
+    width: fit-content;
+    margin: 0;
+    padding: 10px;
+  }
+
+  div {
+    width: fit-content;
+  }
+
+  button {
+    background-color: white;
+    color: black;
+    border: 2px solid #ccc;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  button:hover {
+    background-color: #f0f0f0;
+  }
+</style>
+
+<body>
+  <img src="assets/security_guard.png" alt="buff black dude">
+  <h1>WHO ARE YOU</h1>
+  <div>
+    <button onclick="password_redirect()">the owner</button>
+    <button onclick="guest_redirect()">just a guest</button>
+  </div>
+</body>
+
+<script>
+  const guest_redirect = () => {
+    document.location = "/guest"
+  }
+  const password_redirect = () => {
+    document.location = "/password"
+  }
+</script>
+
+</html>
