@@ -7,18 +7,165 @@
   <title>Document</title>
 </head>
 
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    background-color: #fafafa;
+    font-family: sans-serif;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  h1 {
+    width: fit-content;
+    margin: 0 0 20px;
+    padding: 10px 20px;
+    background-color: #eee;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .upload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .upload p {
+    margin: 0;
+    font-weight: 600;
+    font-size: 18px;
+    color: #555;
+    letter-spacing: 1.5px;
+    user-select: none;
+  }
+
+  .upload button {
+    width: 50px;
+    height: 50px;
+    border-radius: 10%;
+    border: 2px solid #ddd;
+    background-color: #fff;
+    padding: 5px;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .upload button:hover {
+    background-color: #f5f5f5;
+  }
+
+  .upload button img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  li p {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    flex-grow: 1;
+  }
+
+  li div {
+    display: flex;
+    gap: 10px;
+  }
+
+  li div button {
+    width: 36px;
+    height: 36px;
+    padding: 5px;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    transition: background-color 0.2s ease;
+  }
+
+  li div button:hover {
+    background-color: #eaeaea;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #ddd;
+    border-top: 4px solid #555;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
 <body>
   <h1>
     notes
   </h1>
-  <button type="">
-    <img src="/assets/upload.png" alt="plus">
-  </button>
-  <ul>
-    <li>note <button type=""><img src="/assets/download.png" alt="download"></button><button type=""><img
-          src="/assets/delete.png" alt="delete"></button>
-    </li>
+  <div class="upload">
+    <p> UPLOAD </p>
+    <button type="">
+      <img src="/assets/upload.png" alt="plus">
+    </button>
+  </div>
+  <ul id="notes">
+    <!-- <li> -->
+    <!--   <p>note</p> -->
+    <!--   <div> -->
+    <!--     <button type=""><img src="/assets/download.png" alt="download"></button> -->
+    <!--     <button type=""><img src="/assets/delete.png" alt="delete"></button> -->
+    <!--   </div> -->
+    <!-- </li> -->
+    <!---->
+    <!-- <li> -->
+    <!--   <p>note</p> -->
+    <!--   <div> -->
+    <!--     <button type=""><img src="/assets/download.png" alt="download"></button> -->
+    <!--     <button type=""><img src="/assets/delete.png" alt="delete"></button> -->
+    <!--   </div> -->
+    <!-- </li> -->
   </ul>
 </body>
+<script src="note_script.js">
+</script>
 
 </html>
