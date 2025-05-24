@@ -1,14 +1,17 @@
 import express, { json, response } from "express";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { v4 as uuidv4 } from "uuid"
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-
+const sessions = {};
 app.use(json());
+app.use(cookieParser());
 app.use(express.static(join(__dirname, "../frontend")));
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, "../frontend", "index.html"));
@@ -19,18 +22,51 @@ app.get('/guest', (req, res) => {
 app.get('/password', (req, res) => {
   res.sendFile(join(__dirname, "../frontend", "password.html"))
 })
-app.use('/protected', (req, res, next) => {
-  if (req.headers.password === process.env.PASSWORD) {
-    next()
+app.post('/api/authenticate', (req, res) => {
+  const password = req.body.password;
+  if (password !== process.env.PASSWORD) {
+    res.status(401).send("authentication failed");
   } else {
-    res.status(401).send("something went wrong")
+    const session_id = uuidv4();
+    sessions[session_id] = { autherised: true };
+    res.cookie("session", `${session_id}`, { maxAge: 3600000, path: '/notes' })
+    res.send("authentication successfull");
   }
 })
-app.get('/protected/notes', (req, res) => {
-  res.status(200).sendFile(join(__dirname, "../frontend", "notes.html"))
+app.get('/notes', (req, res) => {
+  const id = req.headers.cookie?.split('=')[1];
+  const auth_state = sessions[id];
+  if (!auth_state) {
+    res.status(401).send(`
+
+      <!DOCTYPE html>
+      <html lang="en">
+
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Document</title>
+        </head>
+        <style>
+
+          body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 200px;
+            font-size:50px;
+          }
+        </style>
+        <body>
+          <strong>You thought I was this stupid ? well I'm not you may try again in another way </strong>
+        </body>
+
+      </html>
+`)
+  } else {
+    res.status(200).sendFile(join(__dirname, "../frontend", "notes.html"))
+  }
 })
-
-
 
 app.listen(5000, () => {
   console.log("it is working");
