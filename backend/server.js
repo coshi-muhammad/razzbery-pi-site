@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid"
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import { inisilizeDb, selectDate } from "./data_base.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -67,7 +68,14 @@ app.get('/notes', (req, res) => {
     res.status(200).sendFile(join(__dirname, "../frontend", "notes.html"))
   }
 })
-
+async function dbRoutes() {
+  const db = await inisilizeDb();
+  app.get('/api/get-notes/:start', async (req, res) => {
+    const notes_list = await selectDate(req.params.start, db);
+    res.json(notes_list);
+  })
+}
+dbRoutes();
 app.listen(5000, () => {
   console.log("it is working");
 })

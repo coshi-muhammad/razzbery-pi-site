@@ -3,13 +3,8 @@ import { open } from "sqlite";
 
 export const inisilizeDb = async () => {
   const db = await open({ filename: "../database/mydata.db", driver: sqlite.Database });
+  await db.run("CREATE TABLE IF NOT EXISTS notes (id integer PRIMARY KEY NOT NULL ,name TEXT UNIQUE,date integer,path TEXT)");
   return db
-}
-
-
-export const createTable = async (db) => {
-  await db.run("CREATE TABLE IF NOT EXISTS notes (id integer PRIMARY KEY NOT NULL AUTOINCREMENT,name TEXT UNIQUE,date integer,path TEXT)");
-  console.log("table was created");
 }
 
 export const insert = async (db, data) => {
@@ -31,6 +26,7 @@ export const select = async (db) => {
   return result;
 }
 export const selectDate = async (start, db) => {
+  console.log(db);
   const result = await db.all("SELECT * FROM notes ORDER BY date DESC LIMIT 20 OFFSET ?", [start]);
   console.log(`selected 20 notes starting at ${start}`);
   return result;

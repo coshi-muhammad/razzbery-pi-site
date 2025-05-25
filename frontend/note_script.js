@@ -1,8 +1,9 @@
 
 let note_list = [];
 let start = 0;
+let moddel = false;
 const notes = document.getElementById("notes")
-note_list = [{ name: 'somethin' }, { name: 'somethin' }, { name: 'somethin' }, { name: 'somethin' }, { name: 'somethin' }, { name: 'somethin' }, { name: 'somethin' }]
+const upload_button = document.getElementById('upload_button');
 function checkReachedBottom() {
   result = false;
   window.addEventListener('scroll', () => {
@@ -39,10 +40,41 @@ function toggleSpinner(list) {
     document.getElementById("spinner").remove();
   }
 }
-// fetch(`/api/get-notes/${start}`, { method: "GET", headers: { 'Content-Type': 'application/json' } }).then(res => {
-//   if (res.ok) {
-//     note_list = JSON.parse(res.body.notes);
-//   }
-// })
+fetch(`/api/get-notes/${start}`, { method: "GET", headers: { 'Content-Type': 'application/json' } }).then(async (res) => {
+  if (res.ok) {
+    note_list = await res.json();
+    console.log(note_list);
+  }
+})
+upload_button.addEventListener('click', () => {
+  let form_container = document.createElement('div');
+  form_container.className = "modal-overlay";
+  form_container.id = "modal-overlay";
+  let form = document.createElement('div');
+  form.className = 'modal';
+  let title = document.createElement('h2');
+  title.innerText = "chose a file to upload"
+  let input = document.createElement('input');
+  input.type = 'file';
+  let submit_button = document.createElement("button");
+  submit_button.id = "submit_upload"
+  submit_button.innerText = 'submit'
+  let cancel_button = document.createElement("button");
+  cancel_button.id = "cancel"
+  cancel_button.innerText = 'cancel'
+  form.appendChild(title);
+  form.appendChild(input);
+  form.appendChild(submit_button);
+  form.appendChild(cancel_button);
+  form_container.appendChild(form)
+  document.querySelector('body').appendChild(form_container)
+})
+document.body.addEventListener('click', (e) => {
+  // had to do it this way because the cancel isnt garanted to be there
+  if (e.target.id === 'cancel') {
+    const modal = document.getElementById('modal-overlay');
+    modal.parentElement.removeChild(modal);
+  }
+})
 renderList(notes, note_list);
 toggleSpinner(note_list);
