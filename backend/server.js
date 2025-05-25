@@ -4,16 +4,29 @@ import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid"
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { inisilizeDb, selectDate } from "./data_base.js";
+import { inisilizeDb, insert, selectDate } from "./data_base.js";
+import multer from "multer";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
 const sessions = {};
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, '../storage_area/');
+  },
+  filename: function(req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
 app.use(json());
 app.use(cookieParser());
 app.use(express.static(join(__dirname, "../frontend")));
+
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, "../frontend", "index.html"));
 })
@@ -73,6 +86,12 @@ async function dbRoutes() {
   app.get('/api/get-notes/:start', async (req, res) => {
     const notes_list = await selectDate(req.params.start, db);
     res.json(notes_list);
+  })
+  app.post('/api/uploadfile/:name', upload.single('file'), async (req, res) => {
+    console.log(req.file);
+    const data = { name: req.params.name, path: `../storage_area/${req.params.name}` };
+    await insert(db, data);
+    res.send('successfull');
   })
 }
 dbRoutes();

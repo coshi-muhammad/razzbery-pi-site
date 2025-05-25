@@ -13,7 +13,8 @@ function checkReachedBottom() {
   })
   return result;
 }
-function renderList(notes, note_list) {
+async function renderList(notes, note_list) {
+  await note_list;
   notes.innerHTML = "";
   for (i = 0; i < note_list.length; i++) {
     notes.innerHTML += `
@@ -27,7 +28,7 @@ function renderList(notes, note_list) {
     
                       `
   }
-
+  console.log(note_list);
 }
 function toggleSpinner(list) {
   console.log(list.length);
@@ -56,6 +57,8 @@ upload_button.addEventListener('click', () => {
   title.innerText = "chose a file to upload"
   let input = document.createElement('input');
   input.type = 'file';
+  input.id = 'file'
+  input.name = 'file'
   let submit_button = document.createElement("button");
   submit_button.id = "submit_upload"
   submit_button.innerText = 'submit'
@@ -69,11 +72,27 @@ upload_button.addEventListener('click', () => {
   form_container.appendChild(form)
   document.querySelector('body').appendChild(form_container)
 })
-document.body.addEventListener('click', (e) => {
+document.body.addEventListener('click', async (e) => {
   // had to do it this way because the cancel isnt garanted to be there
   if (e.target.id === 'cancel') {
     const modal = document.getElementById('modal-overlay');
     modal.parentElement.removeChild(modal);
+  }
+  if (e.target.id === "submit_upload") {
+    const file = document.getElementById('file').files[0];
+    const extention = file.name.split('.').at(-1);
+    console.log(extention)
+    if (file && extention === 'md') {
+      console.log(file)
+      const file_data = new FormData();
+      file_data.append('file', file)
+      await fetch(`/api/uploadfile/${file.name}`, { method: "POST", body: file_data }).then(res => {
+        if (res.ok) {
+          alert("upload successfull");
+        }
+      })
+    }
+    document.getElementById('file').value = '';
   }
 })
 renderList(notes, note_list);
