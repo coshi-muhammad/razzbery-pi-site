@@ -1,4 +1,3 @@
-
 let note_list = [];
 let start = 0;
 let moddel = false;
@@ -13,25 +12,26 @@ function checkReachedBottom() {
   })
   return result;
 }
-async function renderList(notes, note_list) {
-  await note_list;
+async function renderList(start, notes, note_list) {
+  toggleSpinner(note_list);
+  let new_list = await getJson(start, note_list);
+  note_list.push(...new_list);
   notes.innerHTML = "";
   for (i = 0; i < note_list.length; i++) {
     notes.innerHTML += `
     <li>
       <p>${note_list[i].name}</p>
       <div>
-        <button type=""><img src="/assets/download.png" alt="download"></button>
-        <button type=""><img src="/assets/delete.png" alt="delete"></button>
+        <button class='download_button' id="download-${i}" type=""><img src="/assets/download.png" alt="download"></button>
+        <button class='delete_button' id="delete-${i}" type=""><img src="/assets/delete.png" alt="delete"></button>
       </div>
     </li>
     
                       `
   }
-  console.log(note_list);
+  toggleSpinner(note_list);
 }
 function toggleSpinner(list) {
-  console.log(list.length);
   if (list.length === 0 || checkReachedBottom()) {
     const spinner = document.createElement('div')
     spinner.id = "spinner"
@@ -41,12 +41,16 @@ function toggleSpinner(list) {
     document.getElementById("spinner").remove();
   }
 }
-fetch(`/api/get-notes/${start}`, { method: "GET", headers: { 'Content-Type': 'application/json' } }).then(async (res) => {
-  if (res.ok) {
-    note_list = await res.json();
-    console.log(note_list);
-  }
-})
+async function getJson(start) {
+  let note_list = [];
+  await fetch(`/api/get-notes/${start}`, { method: "GET", headers: { 'Content-Type': 'application/json' } }).then((res) => {
+    if (res.ok) {
+      note_list = res.json();
+    }
+  })
+  return note_list;
+}
+
 upload_button.addEventListener('click', () => {
   let form_container = document.createElement('div');
   form_container.className = "modal-overlay";
@@ -72,6 +76,17 @@ upload_button.addEventListener('click', () => {
   form_container.appendChild(form)
   document.querySelector('body').appendChild(form_container)
 })
+function showToast(text) {
+  const container = document.createElement('div');
+  container.className = "toast-container";
+  const toast = document.createElement('div');
+  toast.className = "toast";
+  toast.textContent = text;
+  container.appendChild(toast);
+  document.body.appendChild(container);
+  setTimeout(() => { container.remove }, 5000);
+}
+
 document.body.addEventListener('click', async (e) => {
   // had to do it this way because the cancel isnt garanted to be there
   if (e.target.id === 'cancel') {
@@ -81,19 +96,19 @@ document.body.addEventListener('click', async (e) => {
   if (e.target.id === "submit_upload") {
     const file = document.getElementById('file').files[0];
     const extention = file.name.split('.').at(-1);
-    console.log(extention)
     if (file && extention === 'md') {
-      console.log(file)
       const file_data = new FormData();
       file_data.append('file', file)
       await fetch(`/api/uploadfile/${file.name}`, { method: "POST", body: file_data }).then(res => {
         if (res.ok) {
-          alert("upload successfull");
+          showToast("upload sucessfull")
+        } else if (res.status === 500) {
+          showToast("upload failed")
         }
       })
     }
     document.getElementById('file').value = '';
   }
 })
-renderList(notes, note_list);
-toggleSpinner(note_list);
+renderList(start, notes, note_list);
+

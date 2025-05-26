@@ -88,13 +88,17 @@ async function dbRoutes() {
     res.json(notes_list);
   })
   app.post('/api/uploadfile/:name', upload.single('file'), async (req, res) => {
-    console.log(req.file);
+
     const data = { name: req.params.name, path: `../storage_area/${req.params.name}` };
-    await insert(db, data);
-    res.send('successfull');
+    try {
+      await insert(db, data);
+      res.send('successfull');
+    } catch (err) {
+      res.status(500).send("failed to upload");
+    }
   })
 }
 dbRoutes();
-app.listen(5000, () => {
+app.listen(process.env.PATH || 3000, () => {
   console.log("it is working");
 })

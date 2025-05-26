@@ -211,6 +211,49 @@
   button:hover {
     background-color: #f0f0f0;
   }
+
+  .toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .toast {
+    background-color: #fff;
+    color: #333;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #ddd;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-in 3s forwards;
+    max-width: 300px;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
 </style>
 
 
