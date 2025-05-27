@@ -22,10 +22,20 @@ async function handelDownloading(download_list) {
     })
   })
 }
+async function handelDeleteing(delete_list) {
+  delete_list.forEach(delete_button => {
+    let file_name = delete_button.parentElement.parentElement.innerText;
+    delete_button.addEventListener('click', () => {
+      fetch(`/api/delete/${file_name}`, { method: "DELETE" }).then(res => {
+        if (res.ok) {
+          renderList(start, notes, note_list);
+        }
+      });
+    })
+  })
+}
 async function renderList(start, notes, note_list) {
-  toggleSpinner(note_list);
-  let new_list = await getJson(start, note_list);
-  note_list.push(...new_list);
+  note_list = await getJson(start, note_list);
   notes.innerHTML = "";
   for (i = 0; i < note_list.length; i++) {
     notes.innerHTML += `
@@ -41,8 +51,9 @@ async function renderList(start, notes, note_list) {
   }
   toggleSpinner(note_list);
   let download_list = document.querySelectorAll('.download_button')
+  let delete_list = document.querySelectorAll('.delete_button')
   handelDownloading(download_list);
-  // document.getElementById('soemthi').parentElement
+  handelDeleteing(delete_list);
 }
 
 function toggleSpinner(list) {
@@ -52,7 +63,9 @@ function toggleSpinner(list) {
     spinner.className = "spinner"
     document.querySelector('body').appendChild(spinner)
   } else {
-    document.getElementById("spinner").remove();
+    if (document.getElementById("spinner")) {
+      document.getElementById("spinner").remove();
+    }
   }
 }
 async function getJson(start) {
@@ -116,12 +129,15 @@ document.body.addEventListener('click', async (e) => {
       await fetch(`/api/uploadfile/${file.name}`, { method: "POST", body: file_data }).then(res => {
         if (res.ok) {
           showToast("upload sucessfull")
+          renderList(start, notes, note_list);
+          const modal = document.getElementById('modal-overlay');
+          modal.parentElement.removeChild(modal);
         } else if (res.status === 500) {
           showToast("upload failed")
+          document.getElementById('file').value = '';
         }
       })
     }
-    document.getElementById('file').value = '';
   }
 })
 renderList(start, notes, note_list);

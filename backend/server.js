@@ -4,8 +4,9 @@ import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid"
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { inisilizeDb, insert, selectDate } from "./data_base.js";
+import { deleteNote, inisilizeDb, insert, selectDate } from "./data_base.js";
 import multer from "multer";
+import fs from "fs"
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -106,6 +107,12 @@ async function dbRoutes() {
     } catch (err) {
       res.status(500).send("failed to upload");
     }
+  })
+  app.delete('/api/delete/:name', async (req, res) => {
+    const file_path = join(__dirname, '../storage_area', req.params.name);
+    await deleteNote(req.params.name, db);
+    await fs.promises.unlink(file_path);
+    res.status(200).send("deleted successfully ");
   })
 }
 
