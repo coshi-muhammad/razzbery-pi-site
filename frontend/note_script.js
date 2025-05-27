@@ -12,6 +12,16 @@ function checkReachedBottom() {
   })
   return result;
 }
+async function handelDownloading(download_list) {
+  download_list.forEach(download_button => {
+    let file_name = download_button.parentElement.parentElement.innerText;
+    download_button.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.href = `/api/downloadfile/${file_name}`;
+      link.click();
+    })
+  })
+}
 async function renderList(start, notes, note_list) {
   toggleSpinner(note_list);
   let new_list = await getJson(start, note_list);
@@ -30,7 +40,11 @@ async function renderList(start, notes, note_list) {
                       `
   }
   toggleSpinner(note_list);
+  let download_list = document.querySelectorAll('.download_button')
+  handelDownloading(download_list);
+  // document.getElementById('soemthi').parentElement
 }
+
 function toggleSpinner(list) {
   if (list.length === 0 || checkReachedBottom()) {
     const spinner = document.createElement('div')
@@ -111,4 +125,3 @@ document.body.addEventListener('click', async (e) => {
   }
 })
 renderList(start, notes, note_list);
-

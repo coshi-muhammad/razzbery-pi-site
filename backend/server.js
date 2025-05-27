@@ -81,6 +81,16 @@ app.get('/notes', (req, res) => {
     res.status(200).sendFile(join(__dirname, "../frontend", "notes.html"))
   }
 })
+app.get('/api/downloadfile/:file_name', (req, res) => {
+  const filePath = join(__dirname, '../storage_area', req.params.file_name);
+  console.log(filePath)
+  res.download(filePath, 'something.md', (err) => {
+    if (err) {
+      console.error('Download error:', err);
+      res.status(500).send('Error downloading file');
+    }
+  });
+})
 async function dbRoutes() {
   const db = await inisilizeDb();
   app.get('/api/get-notes/:start', async (req, res) => {
@@ -98,7 +108,8 @@ async function dbRoutes() {
     }
   })
 }
+
 dbRoutes();
-app.listen(process.env.PATH || 3000, () => {
+app.listen(5000, '0.0.0.0', () => {
   console.log("it is working");
 })
