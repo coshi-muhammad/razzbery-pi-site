@@ -91,7 +91,7 @@ app.get('/notes', (req, res) => {
 app.get('/api/downloadfile/:file_name', (req, res) => {
   const filePath = join(__dirname, '../storage_area', req.params.file_name);
   console.log(filePath)
-  res.download(filePath, 'something.md', (err) => {
+  res.download(filePath, `${req.params.file_name}`, (err) => {
     if (err) {
       console.error('Download error:', err);
       res.status(500).send('Error downloading file');
