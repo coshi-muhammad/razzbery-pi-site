@@ -1,6 +1,5 @@
 let note_list = [];
 let start = 0;
-let moddel = false;
 const notes = document.getElementById("notes")
 const upload_button = document.getElementById('upload_button');
 function checkReachedBottom() {
@@ -54,6 +53,11 @@ async function renderList(start, notes, note_list) {
   let delete_list = document.querySelectorAll('.delete_button')
   handelDownloading(download_list);
   handelDeleteing(delete_list);
+}
+async function renderOnBottom() {
+  if (checkReachedBottom()) {
+    renderList(start, notes, note_list);
+  }
 }
 
 function toggleSpinner(list) {
@@ -141,3 +145,4 @@ document.body.addEventListener('click', async (e) => {
   }
 })
 renderList(start, notes, note_list);
+

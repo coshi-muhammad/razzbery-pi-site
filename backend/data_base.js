@@ -20,21 +20,10 @@ export const insert = async (db, data) => {
     throw error;
   }
 }
-export const select = async (db) => {
-  const result = await db.all("SELECT * FROM notes")
-  console.log("selected all notes");
-  return result;
-}
 export const selectDate = async (start, db) => {
   console.log(db);
   const result = await db.all("SELECT * FROM notes ORDER BY date DESC LIMIT 20 OFFSET ?", [start]);
   console.log(`selected 20 notes starting at ${start}`);
-  return result;
-}
-
-export const selectPart = async (name, db) => {
-  const result = await db.get("SELECT * FROM notes WHERE name=?", [name])
-  console.log(`selected note with the name ${name}`);
   return result;
 }
 export const deleteNote = async (name, db) => {

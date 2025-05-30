@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid"
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { deleteNote, inisilizeDb, insert, selectDate } from "./data_base.js";
+import { closeDb, deleteNote, inisilizeDb, insert, selectDate } from "./data_base.js";
 import multer from "multer";
 import fs from "fs"
 dotenv.config();
@@ -71,6 +71,12 @@ app.get('/notes', (req, res) => {
             padding: 200px;
             font-size:50px;
           }
+          @media (max-width: 600px) {
+            body {
+              padding: 40px 20px;
+              font-size: 24px;
+            }
+          }
         </style>
         <body>
           <strong>You thought I was this stupid ? well I'm not you may try again in another way </strong>
@@ -114,9 +120,15 @@ async function dbRoutes() {
     await fs.promises.unlink(file_path);
     res.status(200).send("deleted successfully ");
   })
+
+  process.on('SIGINT', async () => {
+    console.log("\nclosing server please wait ...")
+    await closeDb(db);
+    server.close()
+  })
 }
 
 dbRoutes();
-app.listen(5000, '0.0.0.0', () => {
+const server = app.listen(5000, '0.0.0.0', () => {
   console.log("it is working");
 })
